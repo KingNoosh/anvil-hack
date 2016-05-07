@@ -1,8 +1,13 @@
 package io.github.hufghani.chirp;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -14,9 +19,9 @@ import io.chirp.sdk.model.ChirpError;
 import io.chirp.sdk.model.ShortCode;
 
 public class MainActivity extends AppCompatActivity {
-
-    final String API_KEY= "6pLityejVwLzaVJgiUGGzziKU";
-    final String API_SECRET  = "IdS6phZPntPpCbWmd2j7I5O5cs12gNM7mqkpoqcoUkY374gXT1";
+    private static final int RESULT_REQUEST_RECORD_AUDIO = 0;
+    private final String API_KEY= "6pLityejVwLzaVJgiUGGzziKU";
+    private final String API_SECRET  = "IdS6phZPntPpCbWmd2j7I5O5cs12gNM7mqkpoqcoUkY374gXT1";
     Context context;
     ChirpSDK chirpSDK;
     TextView txtView;
@@ -37,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onReadResponse(Chirp chirp) {
+                        Log.d("Chirp: ", chirp.toString());
                         txtView.setText(chirp.getJsonData().toString());
                     }
 
@@ -53,12 +59,39 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
-        chirpSDK.startListening();
-
     }
 
     public void test(View view) {
         chirpSDK.play(new ShortCode("parrotbill"));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, RESULT_REQUEST_RECORD_AUDIO);
+        }
+        else {
+            chirpSDK.startListening();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case RESULT_REQUEST_RECORD_AUDIO: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    chirpSDK.startListening();
+                }
+                return;
+            }
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        chirpSDK.stopListening();
     }
 }
