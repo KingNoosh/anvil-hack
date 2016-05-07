@@ -11,24 +11,14 @@ public class MainActivity extends AppCompatActivity {
     final String API_KEY= "6pLityejVwLzaVJgiUGGzziKU";
     final String API_SECRET  = "IdS6phZPntPpCbWmd2j7I5O5cs12gNM7mqkpoqcoUkY374gXT1";
     Context context;
-    ChirpSDK chirpSDK = new ChirpSDK(context, API_KEY, API_SECRET);
+    ChirpSDK chirpSDK;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context = this;
+        chirpSDK = new ChirpSDK(context, API_KEY, API_SECRET);
     }
 
-    chirpSDK.setListener(new ChirpSDKListener() {
-
-        @Override
-        public void onChirpHeard(ShortCode shortCode) {
-
-        }
-
-        @Override
-        public void onChirpError(ChirpError chirpError) {
-
-        }
-    });
 }
