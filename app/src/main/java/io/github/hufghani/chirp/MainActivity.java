@@ -19,11 +19,12 @@ public class MainActivity extends AppCompatActivity {
     final String API_SECRET  = "IdS6phZPntPpCbWmd2j7I5O5cs12gNM7mqkpoqcoUkY374gXT1";
     Context context;
     ChirpSDK chirpSDK;
-    TextView txtView = (TextView) findViewById(R.id.textView);
+    TextView txtView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        txtView = (TextView) findViewById(R.id.textView);
         context = this;
         chirpSDK = new ChirpSDK(context, API_KEY, API_SECRET);
 
@@ -60,5 +61,4 @@ public class MainActivity extends AppCompatActivity {
     public void test(View view) {
         chirpSDK.play(new ShortCode("parrotbill"));
     }
-
 }
