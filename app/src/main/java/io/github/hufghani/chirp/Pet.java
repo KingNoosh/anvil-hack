@@ -59,6 +59,13 @@ public class Pet {
             Log.d("JSON", e.toString());
         }
     }
+    public void setHealth(int intHealth) {
+        try {
+            this.chirp.put("health", intHealth);
+        } catch (JSONException e) {
+            Log.d("JSON", e.toString());
+        }
+    }
     public void speak(final ChirpSDK chirpSDK) {
         Chirp chirp = new Chirp(this.chirp);
         chirpSDK.create(chirp, new CallbackCreate() {

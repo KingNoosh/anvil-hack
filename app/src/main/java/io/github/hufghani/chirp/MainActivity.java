@@ -10,11 +10,13 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import io.chirp.sdk.CallbackRead;
 import io.chirp.sdk.ChirpSDK;
@@ -68,7 +70,12 @@ public class MainActivity extends AppCompatActivity {
                 txtName.post(new Runnable() {
                     @Override
                     public void run() {
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
                         txtName.setText(strNick);
+                        btnSetName.setVisibility(View.GONE);
+                        editName.setVisibility(View.GONE);
+
                     }
                 });
                 if (!bStarted) {
@@ -99,7 +106,48 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onReadResponse(Chirp chirp) {
                         try {
-                            final String gotit = (String) chirp.getJsonData().get("title");
+                            final JSONObject attacker = chirp.getJsonData();
+                            int health = user.getHealth();
+                            if (attacker.get("type").equals("Fire")) {
+                                if (user.getType().equals("Fire")) {
+                                    health += 2;
+                                }
+                                if (user.getType().equals("Water")) {
+                                    health -= 1;
+                                }
+                                if (user.getType().equals("Grass")) {
+                                    health -= 20;
+                                }
+                            }
+                            if (attacker.get("type").equals("Water")) {
+                                if (user.getType().equals("Fire")) {
+                                    health -= 20;
+                                }
+                                if (user.getType().equals("Water")) {
+                                    health += 2;
+                                }
+                                if (user.getType().equals("Grass")) {
+                                    health -= 1;
+                                }
+                            }
+                            if (attacker.get("type").equals("Grass")) {
+                                if (user.getType().equals("Fire")) {
+                                    health -= 1;
+                                }
+                                if (user.getType().equals("Water")) {
+                                    health -= 20;
+                                }
+                                if (user.getType().equals("Grass")) {
+                                    health += 2;
+                                }
+                            }
+                            user.setHealth(health);
+                            txtHealth.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    txtHealth.setText(user.getHealth());
+                                }
+                            })
                         } catch (JSONException e) {
                             Log.d("JSON", e.toString());
                         }
