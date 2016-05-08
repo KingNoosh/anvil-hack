@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
                                 public void run() {
                                     txtHealth.setText(user.getHealth());
                                 }
-                            })
+                            });
                         } catch (JSONException e) {
                             Log.d("JSON", e.toString());
                         }
